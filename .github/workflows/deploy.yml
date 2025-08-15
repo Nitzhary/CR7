@@ -8,11 +8,10 @@ jobs:
   test:
     name: Run Tests
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Python 3.13
+      - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.13'
@@ -23,30 +22,31 @@ jobs:
           pip install -r requirements.txt
           pip install pytest
 
-      - name: Run tests
+      - name: Run Health Test
         env:
           MONGO_URI: ${{ secrets.MONGO_URI }}
           MONGO_DB_NAME: ${{ secrets.MONGO_DB_NAME }}
           JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
           JWT_ALGORITHM: ${{ secrets.JWT_ALGORITHM }}
           FIREBASE_CREDENTIALS: ${{ secrets.FIREBASE_CREDENTIALS }}
-        run: |
-          pytest --maxfail=1 --disable-warnings -q
+        run: pytest -q --disable-warnings --maxfail=1
 
   deploy:
     name: Deploy to Railway
     needs: test
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
-
     steps:
       - uses: actions/checkout@v4
 
       - name: Install Railway CLI
-        run: curl -fsSL https://railway.app/install.sh | sh
+        run: |
+          curl -fsSL https://railway.app/install.sh | sh
+          echo 'export PATH="$PATH:$HOME/.railway/bin"' >> $GITHUB_ENV
 
-      - name: Deploy service
+      - name: Deploy Service
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
         run: |
-          railway up --service "CR7" || railway up
+          echo "Starting deployment..."
+          railway up --service "cr7-api" || railway up
