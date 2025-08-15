@@ -18,6 +18,10 @@ async def startup_db():
     await connect_to_mongo()
     print("✅ Conexión establecida con MongoDB y servidor iniciado.")
 
+@app.get("/health")
+def health_check():
+    return {"status": "healthy"}
+
 # Incluir rutas
 app.include_router(tipos_torneo.router, prefix="/api/tipos-torneo", tags=["Tipos de Torneo"])
 app.include_router(torneos.router, prefix="/api/torneos", tags=["Torneos"])  
