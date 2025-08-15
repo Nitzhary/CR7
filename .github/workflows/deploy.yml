@@ -49,4 +49,4 @@ jobs:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
         run: |
           echo "Starting deployment..."
-          railway up
+          railway up --service "extraordinary-wholeness"
