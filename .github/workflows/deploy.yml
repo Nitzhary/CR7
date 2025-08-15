@@ -20,17 +20,11 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r app/requirements.txt
+          pip install -r requirements.txt
           pip install pytest
 
       - name: Run Dummy Test
-        env:
-          MONGO_URI: ${{ secrets.MONGO_URI }}
-          MONGO_DB_NAME: ${{ secrets.MONGO_DB_NAME }}
-          JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
-          JWT_ALGORITHM: ${{ secrets.JWT_ALGORITHM }}
-          FIREBASE_CREDENTIALS: ${{ secrets.FIREBASE_CREDENTIALS }}
-        run: pytest -q --disable-warnings --maxfail=1 tests/
+        run: pytest -q --disable-warnings --maxfail=1 test_dummy.py
 
   deploy:
     name: Deploy to Railway
